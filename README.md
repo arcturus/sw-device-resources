@@ -22,3 +22,10 @@ Taking into account the use of the [base tag](https://developer.mozilla.org/en-U
 <base href="http://localhost:8080/desktop/"/>
 ```
 You will need to serve this content from your local machine on the port ```8080``` or change this on the different ```index.html``` files.
+
+
+Example
+=======
+If you have a browser supporting ServiceWorker (Chrome or Firefox Nightly), you can go [here](https://arcturus.github.io/sw-device-resources/index.html)
+
+Remember to have SW enabled, depending on the viewport size you will get different content. If you want to play with different sizes, you will need to unregister the ServiceWorker for this domain.
