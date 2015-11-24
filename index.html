@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <title>Index</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+      ... Loading ... ;)
+    </body>
+    <script src="/lib/localforage.min.js"></script>
+    <script>
+      function makeMagic() {
+        if (!navigator.serviceWorker) {
+          console.warn('No ServiceWorker support');
+          return;
+        }
+
+        localforage.config({
+          driver: localforage.INDEXEDDB,
+          name: 'device_type'
+        });
+
+        var type = getDeviceType();
+        localforage.setItem('type', type).then(installSW);
+      }
+
+      function installSW() {
+        navigator.serviceWorker.getRegistration().then((reg) => {
+          // Register
+          if (!reg) {
+            navigator.serviceWorker.register('sw.js').then(() => {
+              console.log('Instaled!');
+            });
+            // Reload when this document is handled by the sw
+            navigator.serviceWorker.addEventListener('controllerchange', function(evt) {
+              // After doing this reload, this document, index.html will come from
+              // the SW, and wont have this content, but the index.html for the
+              // specific mobile type.
+              window.location.href = window.location.toString();
+            });
+          }
+        });
+      }
+
+      function viewportSize(){
+      	var test = document.createElement( "div" );
+
+      	test.style.cssText = "position: fixed;top: 0;left: 0;bottom: 0;right: 0;";
+      	document.documentElement.insertBefore( test, document.documentElement.firstChild );
+
+      	var dims = { width: test.offsetWidth, height: test.offsetHeight };
+      	document.documentElement.removeChild( test );
+
+      	return dims;
+      }
+
+      /**
+       * This is just a simple, super cheap, and totally inefficient way
+       * of detecting the device type, based on viewport size.
+       * Potentially we could use things like modernizr or mobile-detect
+       * (http://hgoebl.github.io/mobile-detect.js/)
+       */
+      function getDeviceType() {
+        var dims = viewportSize();
+
+        var type = null;
+        if (dims.width < 500) {
+          type = 'phone';
+        } else if (dims.width < 1000) {
+          type = 'tablet';
+        } else if (dims.width < 1600) {
+          type = 'desktop';
+        } else if (dims.width >= 1600) {
+          type = 'tv';
+        }
+
+        return type;
+      }
+
+      window.addEventListener('DOMContentLoaded', makeMagic);
+    </script>
+</html>
